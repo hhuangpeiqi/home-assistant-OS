@@ -1,6 +1,13 @@
 #!/bin/bash
 set -e
 
+export http_proxy=http://192.168.4.55:7897
+export https_proxy=http://192.168.4.55:7897
+export no_proxy=localhost,127.0.0.1
+export HTTP_PROXY=http://192.168.4.55:7897
+export HTTPS_PROXY=http://192.168.4.55:7897
+export NO_PROXY=localhost,127.0.0.1
+
 USER="root"
 
 # Run dockerd
@@ -25,7 +32,8 @@ fi
 
 if CMD="$(command -v "$1")"; then
   shift
-  sudo -H -u ${USER} "$CMD" "$@"
+  echo "Running as: $(whoami), UID: $(id -u), CMD: $CMD"
+  sudo -E -H -u ${USER} "$CMD" "$@"
 else
   echo "Command not found: $1"
   exit 1

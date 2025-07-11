@@ -3,6 +3,18 @@ FROM debian:bullseye
 # Set shell
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
+# Proxy
+ENV http_proxy=http://192.168.4.55:7897
+ENV https_proxy=http://192.168.4.55:7897
+ENV no_proxy=localhost,127.0.0.1
+ENV HTTP_PROXY=http://192.168.4.55:7897
+ENV HTTPS_PROXY=http://192.168.4.55:7897
+ENV NO_PROXY=localhost,127.0.0.1
+
+# Debian source
+RUN sed -i 's/deb.debian.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list \
+    && sed -i 's/security.debian.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
+
 # Docker
 RUN apt-get update && apt-get install -y --no-install-recommends \
         apt-transport-https \
