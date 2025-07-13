@@ -74,7 +74,7 @@ fileenv ${devtype} ${devnum}:${boot_partnum} ${ramdisk_addr_r} cmdline.txt cmdli
 
 
 # Load device tree
-ha_version="rk3566-ha-green.dtb"
+ha_version="rk3566-orangepi-cm4-v1.4.dtb"
 setenv fdtfile $ha_version
 echo "Loading standard device tree ${fdtfile}"
 fatload ${devtype} ${devnum}:${boot_partnum} ${fdt_addr_r} ${fdtfile}
