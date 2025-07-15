@@ -4,15 +4,15 @@ FROM debian:bullseye
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Proxy
-# ENV http_proxy=http://192.168.4.55:7897
-# ENV https_proxy=http://192.168.4.55:7897
-ENV http_proxy=http://192.168.1.5:7897
-ENV https_proxy=http://192.168.1.5:7897
+ENV http_proxy=http://192.168.4.55:7897
+ENV https_proxy=http://192.168.4.55:7897
+# ENV http_proxy=http://192.168.1.5:7897
+# ENV https_proxy=http://192.168.1.5:7897
 ENV no_proxy=localhost,127.0.0.1
-# ENV HTTP_PROXY=http://192.168.4.55:7897
-# ENV HTTPS_PROXY=http://192.168.4.55:7897
-ENV HTTP_PROXY=http://192.168.1.5:7897
-ENV HTTPS_PROXY=http://192.168.1.5:7897
+ENV HTTP_PROXY=http://192.168.4.55:7897
+ENV HTTPS_PROXY=http://192.168.4.55:7897
+# ENV HTTP_PROXY=http://192.168.1.5:7897
+# ENV HTTPS_PROXY=http://192.168.1.5:7897
 ENV NO_PROXY=localhost,127.0.0.1
 
 # Debian source
