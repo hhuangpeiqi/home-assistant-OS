@@ -1,0 +1,94 @@
+#!/bin/bash
+set -e
+
+pwd
+ls -lh
+
+sudo uname -a
+
+REGION=""
+ARGS=()
+
+TARGET=""
+DEFCONFIG_PATH=""
+
+
+apply_region_cn() {
+  echo "-- CN-specific settings"
+
+  sed -i 's|version.home-assistant.io|version.hasscn.top|g' buildroot-external/package/hassio/hassio.mk
+  sed -i 's|ghcr.io/home-assistant|ghcr.nju.edu.cn/ha-china|g' buildroot-external/package/hassio/dind-import-containers.sh
+  sed -i 's|ghcr.io/home-assistant|ghcr.nju.edu.cn/ha-china|g' buildroot-external/rootfs-overlay/usr/sbin/hassos-supervisor
+  sed -i 's|checkonline.home-assistant.io|version.hasscn.top|g' buildroot-external/rootfs-overlay/etc/NetworkManager/NetworkManager.conf
+  sed -i 's|time.cloudflare.com|cn.ntp.org.cn|g' buildroot-external/rootfs-overlay/etc/systemd/timesyncd.conf
+
+  cat buildroot-external/package/hassio/hassio.mk
+}
+apply_region_global() {
+  echo "-- Applying Global-specific settings"
+}
+
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --region)
+      if [[ -z "$2" || "$2" =~ ^-- ]]; then
+        echo "Error: --region requires a value (e.g. cn or global)"
+        exit 1
+      fi
+      REGION="$2"
+      shift 2
+      ;;
+    *)
+      ARGS+=("$1")
+      shift
+      ;;
+  esac
+done
+
+
+if [[ -n "$REGION" ]]; then
+  echo "==> Applying region-specific configuration: $REGION"
+  case "$REGION" in
+    cn)
+      apply_region_cn
+      ;;
+    global)
+      apply_region_global
+      ;;
+    *)
+      echo "Unknown region: $REGION"
+      exit 1
+      ;;
+  esac
+fi
+
+
+COMMAND="${ARGS[@]}"
+if [[ "$COMMAND" =~ ^([a-zA-Z0-9_-]+)$ ]]; then
+  TARGET="${BASH_REMATCH[1]}"
+
+  if [[ "$TARGET" == "clean" || "$TARGET" == "distclean" ]]; then
+    echo "==> Skipping defconfig modification for target: $TARGET"
+  else
+    DEFCONFIG_PATH="buildroot-external/configs/${TARGET}_defconfig"
+    echo "==> Detected build target: $TARGET"
+    echo "-- Modifying defconfig at: $DEFCONFIG_PATH"
+
+    if [[ -f "$DEFCONFIG_PATH" ]]; then
+      COMPONENTS=(
+        "BR2_PACKAGE_WGET=y"
+        "BR2_PACKAGE_HTOP=y"
+        "BR2_PACKAGE_VIM=y"
+        "BR2_PACKAGE_UNZIP=y"
+      )
+
+      for component in "${COMPONENTS[@]}"; do
+        grep -q "^$component$" "$DEFCONFIG_PATH" || echo "$component" >> "$DEFCONFIG_PATH"
+      done
+      cat $DEFCONFIG_PATH
+    else
+      echo "!!! Warning: Defconfig file not found: $DEFCONFIG_PATH"
+    fi
+  fi
+fi

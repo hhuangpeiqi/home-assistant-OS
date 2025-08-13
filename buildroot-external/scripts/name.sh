@@ -1,13 +1,11 @@
 #!/bin/bash
 
 function hassos_image_name() {
-    local date_suffix=$(date +%Y%m%d)
-    echo "${BINARIES_DIR}/${HASSOS_ID}_${BOARD_ID}_$(hassos_version)_${date_suffix}.${1}"
+    echo "${BINARIES_DIR}/${HASSOS_ID}_${BOARD_ID}-$(hassos_version).${1}"
 }
 
 function hassos_image_basename() {
-    local date_suffix=$(date +%Y%m%d)
-    echo "${BINARIES_DIR}/${HASSOS_ID}_${BOARD_ID}_$(hassos_version)_${date_suffix}"
+    echo "${BINARIES_DIR}/${HASSOS_ID}_${BOARD_ID}-$(hassos_version)"
 }
 
 function hassos_rauc_compatible() {

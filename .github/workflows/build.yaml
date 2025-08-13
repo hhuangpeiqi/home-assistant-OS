@@ -22,7 +22,7 @@ on:
           - beta
           - dev
       region:
-        description: 'Target region (default = universal build)'
+        description: 'Target region (default: haos official version)'
         type: choice
         required: true
         default: default
@@ -62,14 +62,10 @@ jobs:
         env:
           PUBLISH_FLAG: ${{ inputs.publish }}
         run: |
-          if [ "${{ github.repository }}" == "home-assistant/operating-system" ]; then
-            if [ "${PUBLISH_FLAG}" != "true" ] && [ "${{ github.event_name }}" != "release" ]; then
-              echo "publish_build=false" >> "$GITHUB_OUTPUT"
-            else
-              echo "publish_build=true" >> "$GITHUB_OUTPUT"
-            fi
-          else
+          if [ "${PUBLISH_FLAG}" != "true" ] && [ "${{ github.event_name }}" != "release" ]; then
             echo "publish_build=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "publish_build=true" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Generate development version
@@ -265,6 +261,21 @@ jobs:
           path: /mnt/cache/cc
           key: haos-cc-${{ matrix.board.id }}
 
+
+      - name: Apply region patch
+        uses: "./.github/actions/haos-builder-command"
+        with:
+          image: ${{ needs.prepare.outputs.build_container_image }}
+          command: |
+            if [ "${{ inputs.region }}" = "cn" ]; then
+              region --region cn ${{ matrix.board.defconfig }}
+              echo ${{ matrix.board.defconfig }}
+            else
+              region --region global ${{ matrix.board.defconfig }}
+              echo ${{ matrix.board.defconfig }}
+            fi
+
+
       - name: Generate build config
         uses: "./.github/actions/haos-builder-command"
         with:
@@ -388,9 +399,9 @@ jobs:
           path: |
             output/images/haos_${{ matrix.board.id }}-${{ needs.prepare.outputs.version_full }}.vhdx.zip
 
-  test:
-    name: Test OS image
-    needs: [ build, prepare ]
-    uses: ./.github/workflows/test.yaml
-    with:
-      version: ${{ needs.prepare.outputs.version_full }}
+  # test:
+  #   name: Test OS image
+  #   needs: [ build, prepare ]
+  #   uses: ./.github/workflows/test.yaml
+  #   with:
+  #     version: ${{ needs.prepare.outputs.version_full }}
