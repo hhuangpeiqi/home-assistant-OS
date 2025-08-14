@@ -267,13 +267,7 @@ jobs:
         with:
           image: ${{ needs.prepare.outputs.build_container_image }}
           command: |
-            if [ "${{ inputs.region }}" = "cn" ]; then
-              region --region cn ${{ matrix.board.defconfig }}
-              echo ${{ matrix.board.defconfig }}
-            else
-              region --region global ${{ matrix.board.defconfig }}
-              echo ${{ matrix.board.defconfig }}
-            fi
+            [ "${{ inputs.region }}" = "cn" ] && ./region --region cn "${{ matrix.board.defconfig }}" || ./region --region global "${{ matrix.board.defconfig }}"
 
 
       - name: Generate build config
