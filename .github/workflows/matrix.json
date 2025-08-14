@@ -18,6 +18,12 @@
     "label": "board/generic-aarch64"
   },
   {
+    "id": "rpi4-64",
+    "defconfig": "rpi4_64",
+    "architecture": "aarch64",
+    "label": "board/raspberrypi"
+  },
+  {
     "id": "orangepi-cm4",
     "defconfig": "orangepi_cm4",
     "architecture": "aarch64",
