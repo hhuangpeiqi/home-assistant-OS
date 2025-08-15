@@ -22,13 +22,13 @@ on:
           - beta
           - dev
       region:
-        description: 'Target region (default: haos official version)'
+        description: 'Target region (official: haos official version)'
         type: choice
         required: true
-        default: default
+        default: cn
         options:
-          - default
           - cn
+          - official
 
 env:
   PYTHON_VERSION: "3.13"
@@ -267,7 +267,7 @@ jobs:
         with:
           image: ${{ needs.prepare.outputs.build_container_image }}
           command: |
-            [ "${{ inputs.region }}" = "cn" ] && ./region --region cn "${{ matrix.board.defconfig }}" || ./region --region global "${{ matrix.board.defconfig }}"
+            [ "${{ inputs.region }}" = "official" ] && ./region --region global "${{ matrix.board.defconfig }}" || ./region --region cn "${{ matrix.board.defconfig }}"
 
 
       - name: Generate build config
