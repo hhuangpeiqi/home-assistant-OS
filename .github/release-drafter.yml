@@ -4,6 +4,10 @@ version-template: "$MAJOR.$MINOR"
 categories:
   - title: 'Home Assistant Operating System'
     label: 'os'
+  - title: 'Orange Pi'
+    label: 'board/orangepi'
+  - title: 'Panther X2'
+    label: 'board/panther'
   - title: 'Raspberry Pi'
     label: 'board/raspberrypi'
   - title: 'Home Assistant Yellow'
