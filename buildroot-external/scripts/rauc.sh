@@ -6,6 +6,11 @@ function prepare_rauc_signing() {
     local key="/build/key.pem"
     local cert="/build/cert.pem"
 
+    echo "prepare_rauc_signing------"
+    pwd
+    ls -l /build
+    cat /build/cert.pem
+
     if [ ! -f "${key}" ]; then
         echo "Generating a self-signed certificate for development"
         "${BR2_EXTERNAL_HASSOS_PATH}"/scripts/generate-signing-key.sh "${cert}" "${key}"
@@ -32,6 +37,11 @@ function write_rauc_config() {
 function install_rauc_certs() {
     local cert="/build/cert.pem"
 
+    echo "install_rauc_certs1------"
+    pwd
+    ls -l /build
+    cat /build/cert.pem
+
     if [ "${DEPLOYMENT}" == "development" ]; then
         # Contains development and release certificate
         cp "${BR2_EXTERNAL_HASSOS_PATH}/ota/dev-ca.pem" "${TARGET_DIR}/etc/rauc/keyring.pem"
@@ -39,12 +49,21 @@ function install_rauc_certs() {
         cp "${BR2_EXTERNAL_HASSOS_PATH}/ota/rel-ca.pem" "${TARGET_DIR}/etc/rauc/keyring.pem"
     fi
 
+    echo "install_rauc_certs2------"
+    pwd
+    ls -l /build
+    cat /build/cert.pem
+
     # Add local self-signed certificate (if not trusted by the dev or release
     # certificate it is a self-signed certificate, dev-ca.pem contains both)
     if ! openssl verify -CAfile "${BR2_EXTERNAL_HASSOS_PATH}/ota/dev-ca.pem" -no-CApath "${cert}"; then
         echo "Adding self-signed certificate to keyring."
         openssl x509 -in "${cert}" -text >> "${TARGET_DIR}/etc/rauc/keyring.pem"
     fi
+    echo "install_rauc_certs3------"
+    pwd
+    ls -l /build
+    cat /build/cert.pem
 }
 
 
