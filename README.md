@@ -1,61 +1,84 @@
-# Home Assistant Operating System
+# Home Assistant OS 适配机型+国内加速
 
-Home Assistant Operating System (formerly HassOS) is a Linux based operating system optimized to host [Home Assistant](https://www.home-assistant.io) and its [Add-ons](https://www.home-assistant.io/addons/).
+- [中文](README.md)
+- [English](README_EN.md)
 
-Home Assistant Operating System uses Docker as its container engine. By default it deploys the Home Assistant Supervisor as a container. Home Assistant Supervisor in turn uses the Docker container engine to control Home Assistant Core and Add-Ons in separate containers. Home Assistant Operating System is **not** based on a regular Linux distribution like Ubuntu. It is built using [Buildroot](https://buildroot.org/) and it is optimized to run Home Assistant. It targets single board compute (SBC) devices like the Raspberry Pi or ODROID but also supports x86-64 systems with UEFI.
+## 🏠 项目简介
+[![GitHub release](https://img.shields.io/github/release/hhuangpeiqi/home-assistant-OS.svg)](https://github.com/hhuangpeiqi/home-assistant-OS/releases)
+[![License](https://img.shields.io/github/license/hhuangpeiqi/home-assistant-OS)](./LICENSE)
 
-[![Home Assistant - A project from the Open Home Foundation](https://www.openhomefoundation.org/badges/home-assistant.png)](https://www.openhomefoundation.org/)
 
-## Features
+本项目是基于官方 [Home Assistant OS](https://github.com/home-assistant/operating-system) 的定制版本，主要针对国内使用环境进行了优化，并添加了对更多机型的支持：
 
-- Lightweight and memory-efficient
-- Minimized I/O
-- Over The Air (OTA) updates
-- Offline updates
-- Modular using Docker container engine
+- 🌐 **国内网络优化**：默认（release）使用国内镜像源加速下载
+- 🖥️ **更多机型支持**：新增多种非官方支持设备的适配
+- 🔄 **双版本支持**：同时提供国内加速版和官方原版
 
-## Supported hardware
+## 📦 版本区别
 
-- Nabu Casa
-- Raspberry Pi
-- Hardkernel ODROID
-- Asus Tinker Board
-- Generic x86-64 (e.g. Intel NUC)
-- Virtual appliances
+| 特性               | 国内加速版          | 官方原版          |
+|--------------------|-------------------|-----------------|
+| docker             | 国内镜像（nju）  | 官方源（ghcr.io）    |
+| 更新服务器         | 国内节点           | 国际节点         |
+| Add-ons          | 国内常用插件源       | 官方默认        |
 
-See the full list and specific models [here](./Documentation/boards/README.md)
+## 📱 已适配设备
 
-## Getting Started
+#### （持续更新）除了官方支持的设备外，本版本还额外支持以下设备：
 
-If you just want to use Home Assistant the official [getting started guide](https://www.home-assistant.io/getting-started/) and [installation instructions](https://www.home-assistant.io/hassio/installation/) take you through how to download Home Assistant Operating System and get it running on your machine.
+- **Orange Pi CM4**
+  - ✅ 测试v1.3.1硬件基本功能正常
+  - ⚠️ 已知问题： v1.4硬件无法启动、TF卡启动可能异常
+- **Panther X2**
+  - ⚠️ 初步适配来源于网络（抱歉，忘记来源仓库）
+  - ⚠️ 详细待测试
 
-If you're interested in finding out more about Home Assistant Operating System and how it works read on...
+> **默认Release机型**：ova、generic-x86-64、generic-aarch64、rpi4-64、orangepi-cm4、panther-x2
 
-## Development
+## 🚀 快速开始
 
-If you don't have experience with embedded systems, Buildroot or the build process for Linux distributions it is recommended to read up on these topics first (e.g. [Bootlin](https://bootlin.com/docs/) has excellent resources).
+### ✨ 最新版本
 
-The Home Assistant Operating System documentation can be found on the [Home Assistant Developer Docs website](https://developers.home-assistant.io/docs/operating-system).
+[![Latest Release](https://img.shields.io/github/release/hhuangpeiqi/home-assistant-OS?label=最新版本)](https://github.com/hhuangpeiqi/home-assistant-OS/releases/latest)
 
-### Components
+### 📖 安装指南
 
-- **Bootloader:**
-  - [GRUB](https://www.gnu.org/software/grub/) for devices that support UEFI
-  - [U-Boot](https://www.denx.de/wiki/U-Boot) for devices that don't support UEFI
-- **Operating System:**
-  - [Buildroot](https://buildroot.org/) LTS Linux
-- **File Systems:**
-  - [SquashFS](https://www.kernel.org/doc/Documentation/filesystems/squashfs.txt) for read-only file systems (using LZ4 compression)
-  - [ZRAM](https://www.kernel.org/doc/Documentation/blockdev/zram.txt) for `/tmp`, `/var` and swap (using LZ4 compression)
-- **Container Platform:**
-  - [Docker Engine](https://docs.docker.com/engine/) for running Home Assistant components in containers
-- **Updates:**
-  - [RAUC](https://rauc.io/) for Over The Air (OTA) and USB updates
-- **Security:**
-  - [AppArmor](https://apparmor.net/) Linux kernel security module
+1. **下载镜像**  
+   从 [Releases 页面](https://github.com/hhuangpeiqi/home-assistant-OS/releases) 下载最新镜像（默认提供国内加速版）
 
-### Development builds
+2. **写入设备（仅针对嵌入式，其余设备按照实际情况使用）**  
+   嵌入式arm设备（img）推荐使用以下工具刷写镜像：
+   - [Balena Etcher](https://www.balena.io/etcher/)
+   - [Raspberry Pi Imager](https://www.raspberrypi.com/software/)
+   - RKDevTool（Rockchip）
+   - 命令行写入
+  ```bash
+  # 命令行写入示例（根据实际情况修改）
+  dd if=haos_cn.img of=/dev/mmcblk1 bs=4M status=progress
+  ```
 
-The Development build GitHub Action Workflow is a manually triggered workflow
-which creates Home Assistant OS development builds. The development builds are
-available at [https://os-artifacts.home-assistant.io/index.html](https://os-artifacts.home-assistant.io/index.html).
+> **注意**：国内用户建议使用国内加速版以获得更好的体验
+
+### ⚙️ 构建说明
+
+如需自行构建，请确保已安装必要的依赖环境：
+
+```bash
+# 国内加速版构建（orangepi-cm4为例）
+./build --region cn make orangepi-cm4
+
+# 原版构建
+./build make orangepi-cm4
+```
+
+## 贡献
+欢迎通过 Issue 或 Pull Request 提交改进建议。特别欢迎针对新设备适配的贡献。
+
+## 致谢
+
+- [Home Assistant 官方项目](https://github.com/home-assistant/operating-system) 
+- [HAOS-CN 老王杂谈说](https://www.hasscn.top/)：提供国内所需源服务
+- 所有为国内加速和机型适配提供支持的开发者
+
+## 许可证
+本项目基于 Home Assistant OS 官方项目修改，遵循相同的 [Apache License 2.0](./LICENSE) 许可。
