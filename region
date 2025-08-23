@@ -60,7 +60,7 @@ if [[ -n "$REGION" ]]; then
 fi
 
 
-COMMAND="${ARGS[@]}"
+COMMAND="${ARGS[*]}"
 if [[ "$COMMAND" =~ ^([a-zA-Z0-9_-]+)$ ]]; then
   TARGET="${BASH_REMATCH[1]}"
 
