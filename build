@@ -1,4 +1,8 @@
 #!/bin/bash
+# ==========================================================================
+# author   : huangpeiqi
+# use      : ./build ; ./build make ova; ./build --region cn/global make ova
+# ==========================================================================
 set -e
 
 # 当前宿主机
@@ -18,6 +22,9 @@ FILES_TO_RESTORE=(
   buildroot-external/rootfs-overlay/usr/sbin/hassos-supervisor
   buildroot-external/rootfs-overlay/etc/NetworkManager/NetworkManager.conf
   buildroot-external/rootfs-overlay/etc/systemd/timesyncd.conf
+
+  ./Dockerfile
+  scripts/entry.sh
 )
 
 BACKUP_DIR="/tmp/region_backup_$$"
@@ -65,9 +72,8 @@ apply_region_cn() {
   sed -i 's|ghcr.io/home-assistant|ghcr.nju.edu.cn/ha-china|g' buildroot-external/package/hassio/dind-import-containers.sh
   sed -i 's|ghcr.io/home-assistant|ghcr.nju.edu.cn/ha-china|g' buildroot-external/rootfs-overlay/usr/sbin/hassos-supervisor
   sed -i 's|checkonline.home-assistant.io|version.hasscn.top|g' buildroot-external/rootfs-overlay/etc/NetworkManager/NetworkManager.conf
-  sed -i 's|time.cloudflare.com|cn.ntp.org.cn|g' buildroot-external/rootfs-overlay/etc/systemd/timesyncd.conf
+  sed -i 's|time.cloudflare.com|ntp.ntsc.ac.cn|g' buildroot-external/rootfs-overlay/etc/systemd/timesyncd.conf
 
-  SHOULD_RESTORE=1
 }
 apply_region_global() {
   echo "-- Applying Global-specific settings"
@@ -112,7 +118,7 @@ fi
 
 
 # 动态加入buildroot包
-COMMAND="${ARGS[@]}"
+COMMAND="${ARGS[*]}"
 if [[ "$COMMAND" =~ ^make[[:space:]]+([a-zA-Z0-9_-]+)$ ]]; then
   TARGET="${BASH_REMATCH[1]}"
 
@@ -147,5 +153,16 @@ if [[ "$COMMAND" =~ ^make[[:space:]]+([a-zA-Z0-9_-]+)$ ]]; then
 fi
 
 
+# 本地编译使用国内加速
+if [ -f ~/tmp/Dockerfile ]; then
+    cp ~/tmp/Dockerfile ./Dockerfile
+fi
+if [ -f ~/tmp/entry.sh ]; then
+    cp ~/tmp/entry.sh ./scripts/entry.sh
+fi
+SHOULD_RESTORE=1
+
+
 # 进入官方构建
-scripts/enter.sh ${COMMAND}
+scripts/enter.sh "$COMMAND"
+date
