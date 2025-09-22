@@ -164,5 +164,5 @@ SHOULD_RESTORE=1
 
 
 # 进入官方构建
-scripts/enter.sh "$COMMAND"
+scripts/enter.sh "${ARGS[@]}"
 date
