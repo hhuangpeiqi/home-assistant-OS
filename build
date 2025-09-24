@@ -1,7 +1,8 @@
 #!/bin/bash
 # ==========================================================================
 # author   : huangpeiqi
-# use      : ./build ; ./build make ova; ./build --region cn/global make ova
+# use      : Local build
+# usage    : ./build ; ./build make ova; ./build --region cn/global make ova
 # ==========================================================================
 set -e
 
@@ -25,6 +26,7 @@ FILES_TO_RESTORE=(
 
   ./Dockerfile
   scripts/entry.sh
+  scripts/enter.sh
 )
 
 BACKUP_DIR="/tmp/region_backup_$$"
@@ -159,6 +161,9 @@ if [ -f ~/tmp/Dockerfile ]; then
 fi
 if [ -f ~/tmp/entry.sh ]; then
     cp ~/tmp/entry.sh ./scripts/entry.sh
+fi
+if [ -f ~/tmp/enter.sh ]; then
+    cp ~/tmp/enter.sh ./scripts/enter.sh
 fi
 SHOULD_RESTORE=1
 
