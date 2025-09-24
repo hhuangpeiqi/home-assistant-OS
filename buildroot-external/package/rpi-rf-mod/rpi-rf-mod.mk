@@ -6,16 +6,14 @@
 # This includes compiling of required device tree overlays for
 # selected platforms
 #
-# Codeload URL:
-# https://codeload.github.com/jens-maus/RaspberryMatic/tar.gz/COMMIT
-#
 # Copyright (c) 2018-2023 Jens Maus <mail@jens-maus.de>
-# https://github.com/jens-maus/RaspberryMatic/tree/master/buildroot-external/package/rpi-rf-mod
+# https://github.com/openccu/openccu/tree/master/buildroot-external/package/rpi-rf-mod
 #
 ################################################################################
 
-RPI_RF_MOD_VERSION = 0ee62f7a87d26e990fb0e03b00befb505a7e44fd
-RPI_RF_MOD_SITE = $(call github,jens-maus,RaspberryMatic,$(RPI_RF_MOD_VERSION))
+RPI_RF_MOD_VERSION = 1.13.3
+RPI_RF_MOD_SITE = $(BR2_EXTERNAL_HASSOS_PATH)/package/rpi-rf-mod
+RPI_RF_MOD_SITE_METHOD = local
 RPI_RF_MOD_LICENSE = Apache-2.0
 RPI_RF_MOD_LICENSE_FILES = LICENSE
 RPI_RF_MOD_DEPENDENCIES = host-dtc
@@ -43,21 +41,20 @@ endif
 
 define RPI_RF_MOD_BUILD_CMDS
 	if [[ -n "$(RPI_RF_MOD_DTS_FILE)" ]]; then \
-		$(HOST_DIR)/bin/dtc -@ -I dts -O dtb -W no-unit_address_vs_reg -o $(@D)/buildroot-external/package/rpi-rf-mod/dts/rpi-rf-mod.dtbo $(@D)/buildroot-external/package/rpi-rf-mod/dts/$(RPI_RF_MOD_DTS_FILE).dts; \
+		$(HOST_DIR)/bin/dtc -@ -I dts -O dtb -W no-unit_address_vs_reg -o $(@D)/dts/rpi-rf-mod.dtbo $(@D)/dts/$(RPI_RF_MOD_DTS_FILE).dts; \
 	fi
 	if [[ -n "$(RPI_RF_MOD_DTS_FILE_ALT)" ]]; then \
-		$(HOST_DIR)/bin/dtc -@ -I dts -O dtb -W no-unit_address_vs_reg -o $(@D)/buildroot-external/package/rpi-rf-mod/dts/$(RPI_RF_MOD_DTS_FILE_ALT).dtbo $(@D)/buildroot-external/package/rpi-rf-mod/dts/$(RPI_RF_MOD_DTS_FILE_ALT).dts; \
+		$(HOST_DIR)/bin/dtc -@ -I dts -O dtb -W no-unit_address_vs_reg -o $(@D)/dts/$(RPI_RF_MOD_DTS_FILE_ALT).dtbo $(@D)/dts/$(RPI_RF_MOD_DTS_FILE_ALT).dts; \
 	fi
 endef
 
 define RPI_RF_MOD_INSTALL_TARGET_CMDS
 	if [[ -n "$(RPI_RF_MOD_DTS_FILE)" ]]; then \
-		$(INSTALL) -D -m 0644 $(@D)/buildroot-external/package/rpi-rf-mod/dts/rpi-rf-mod.dtbo $(BINARIES_DIR)/; \
+		$(INSTALL) -D -m 0644 $(@D)/dts/rpi-rf-mod.dtbo $(BINARIES_DIR)/; \
 	fi
 	if [[ -n "$(RPI_RF_MOD_DTS_FILE_ALT)" ]]; then \
-		$(INSTALL) -D -m 0644 $(@D)/buildroot-external/package/rpi-rf-mod/dts/$(RPI_RF_MOD_DTS_FILE_ALT).dtbo $(BINARIES_DIR)/; \
+		$(INSTALL) -D -m 0644 $(@D)/dts/$(RPI_RF_MOD_DTS_FILE_ALT).dtbo $(BINARIES_DIR)/; \
 	fi
-	$(INSTALL) -D -m 644 $(RPI_RF_MOD_PKGDIR)/82-rpi-rf-mod-leds.rules $(TARGET_DIR)/lib/udev/rules.d/
 endef
 
 $(eval $(generic-package))
